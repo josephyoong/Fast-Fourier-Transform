@@ -1,6 +1,12 @@
+##
 
+Successful FFT
 
-Simulating with Icarus Verilog
+The output signal is stored in mem1a and can be visualised in MATLAB
+
+Next step: VGA interface to display input time domain signal and output frequency domain signal
+
+# Simulating with Icarus Verilog
 
 install oss cad suite
 
@@ -25,7 +31,7 @@ gtkwave tb_butterfly.vcd
 
 
 
-iCE40 Programming Instructions
+# iCE40 Programming Instructions
 
 install oss cad suite
 
@@ -41,5 +47,6 @@ place and route using nextpnr
 
 generate bitstream using icepack
 .asc -> .bin
+
 
 drag and drop bitstream into iCELink drive
