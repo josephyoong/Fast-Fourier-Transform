@@ -1,52 +1,57 @@
-##
+# Fast Fourier Transform on iCE40 FPGA
 
-Successful FFT
+Joseph Yoong
 
-The output signal is stored in mem1a and can be visualised in MATLAB
+The output frequency domain signal is stored in mem1a and can be visualised in MATLAB
 
-Next step: VGA interface to display input time domain signal and output frequency domain signal
+Next step: VGA interface to display input time domain signal and output frequency domain signal on a monitor
 
-# Simulating with Icarus Verilog
+## Simulating with Icarus Verilog
 
-install oss cad suite
+### Install OSS CAD Suite
 
-enter oss cad suite environment through command prompt
+### Enter the OSS CAD Suite environment through command prompt
+
 cd C:\Users\josep\Documents\FPGA\oss-cad-suite
+
 environment.bat
 
-check version 
+### Check version 
+
 iverilog -V
 
-navigate to FFT folder 
+### Navigate to FFT folder 
 cd C:\Users\josep\Documents\FPGA\FFT
 
-compile 
+### Compile 
 iverilog -g2012 -o sim.out src/butterfly.sv tb/tb_butterfly.sv src/complex_multiplier.sv
 
-run
+### Run
 vvp sim.out
 
-view waveform
+### View waveform
 gtkwave tb_butterfly.vcd
 
 
 
-# iCE40 Programming Instructions
+## iCE40 Programming Instructions
 
-install oss cad suite
+### Install OSS CAD Suite
 
-enter oss cad suite environment through command prompt
+### Enter the OSS CAD Suite environment through command prompt
+
 cd C:\Users\josep\Documents\FPGA\oss-cad-suite
+
 environment.bat
 
-synthesise using yosys
+### Synthesise using yosys
 .sv -> .json
 
-place and route using nextpnr
+### Place and route using nextpnr
 .json -> .asc
 
-generate bitstream using icepack
+### Generate bitstream using icepack
 .asc -> .bin
 
+### Drag and drop bitstream into iCELink drive
 
-drag and drop bitstream into iCELink drive
