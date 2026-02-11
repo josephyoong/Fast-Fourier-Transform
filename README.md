@@ -1,45 +1,68 @@
+# Fast Fourier Transform on iCE40 FPGA
+
+Joseph Yoong
+
+Performs the fast Fourier transform on an input signal and displays the output frequency spectrum on a monitor via VGA
 
 
-Simulating with Icarus Verilog
 
-install oss cad suite
+## Simulating with Icarus Verilog
 
-enter oss cad suite environment through command prompt
+### Install OSS CAD Suite
+
+### Enter the OSS CAD SUITE environment through command prompt
+
 cd C:\Users\josep\Documents\FPGA\oss-cad-suite
+
 environment.bat
 
-check version 
-iverilog -V
+### Navigate to the folder
 
-navigate to FFT folder 
-cd C:\Users\josep\Documents\FPGA\spectrum2
+cd C:\Users\josep\Documents\FPGA\Fast-Fourier-Transform
 
-compile 
-iverilog -g2012 -o sim.out src/butterfly.sv tb/tb_butterfly.sv src/complex_multiplier.sv
+### Compile 
 
-run
+iverilog -g2012 -DDEBUG -o sim.out sim/tb_main.sv src\address_generator.sv src\butterfly.sv src\complex_multiplier.sv src\dp_bram_512x16.sv src\fft_control.sv src\grapher.sv src\hvsync_gen.sv src\memory.sv src\rom_512x16.sv src\spectrum_analyser_control.sv src\spectrum_analyser.sv src\top.sv
+
+### Run
+
 vvp sim.out
 
-view waveform
-gtkwave tb_butterfly.vcd
+### View waveform
+
+gtkwave tb_main.vcd
 
 
 
-iCE40 Programming Instructions
+## iCE40 Programming Instructions
 
-install oss cad suite
+### Install OSS CAD Suite
 
-enter oss cad suite environment through command prompt
+### Enter the OSS CAD SUITE environment through command prompt
+
 cd C:\Users\josep\Documents\FPGA\oss-cad-suite
+
 environment.bat
 
-synthesise using yosys
+### Synthesise using yosys
+
 .sv -> .json
 
-place and route using nextpnr
+yosys -p "read_verilog -sv src\address_generator.sv src\butterfly.sv src\complex_multiplier.sv src\dp_bram_512x16.sv src\fft_control.sv src\grapher.sv src\hvsync_gen.sv src\memory.sv src\rom_512x16.sv src\spectrum_analyser_control.sv src\spectrum_analyser.sv src\top.sv ; synth_ice40 -dsp -top top -json top.json"
+
+
+### Place and route using nextpnr
+
 .json -> .asc
 
-generate bitstream using icepack
+nextpnr-ice40 --up5k --package sg48 --json top.json --pcf constraints\io.pcf --asc top.asc --sdc constraints\constraints.sdc  --verbose
+
+
+### Generate bitstream using icepack
+
 .asc -> .bin
 
-drag and drop bitstream into iCELink drive
+icepack top.asc top.bin
+
+
+### Drag and drop bitstream into iCELink drive
