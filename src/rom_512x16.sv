@@ -16,7 +16,7 @@ need two rom_512x16: one for real, one for imaginary
 */
 
 module rom_512x16 #(
-    parameter REAL // 1 REAL, 0 IMAG
+    parameter MEM_FILE = ""
 ) (
     input i_clk,
 
@@ -28,20 +28,29 @@ module rom_512x16 #(
 
 reg [15:0] r_mem [0:511];
 
-real angle;
-
-// trig values Q1.15
 initial begin
-    for (int i=0; i<512; i++) begin
-        // Divisor 1024.0 ensures i=511 results in angle PI (N/2)
-        angle = 2.0 * 3.14159265358979323846 * i / 1024.0;
-        
-        if (REAL)
-             r_mem[i] = real_to_q1p15($cos(angle));
-        else
-             r_mem[i] = real_to_q1p15(-$sin(angle));
+    if (MEM_FILE != "") begin
+        $readmemh(MEM_FILE, r_mem);
+    end
+    else begin
+        $readmemh("src/mem_zeroes.mem", r_mem);
     end
 end
+
+// real angle;
+
+// // trig values Q1.15
+// initial begin
+//     for (int i=0; i<512; i++) begin
+//         // Divisor 1024.0 ensures i=511 results in angle PI (N/2)
+//         angle = 2.0 * 3.14159265358979323846 * i / 1024.0;
+        
+//         if (REAL)
+//              r_mem[i] = real_to_q1p15($cos(angle));
+//         else
+//              r_mem[i] = real_to_q1p15(-$sin(angle));
+//     end
+// end
 
 always_ff @(posedge i_clk) begin
     o_rd_data <= i_rd_en ? r_mem[i_rd_addr] : 0;
@@ -49,20 +58,20 @@ end
 
 endmodule
 
-function logic signed [15:0] real_to_q1p15(input real num);
-    real scaled;
-    begin
-        if (num >= 0.999969482421875)      // (32767 / 32768) is Q1.15 0.111111111111111
-            real_to_q1p15 = 16'sh7FFF;
-        else if (num <= -1.0)
-            real_to_q1p15 = 16'sh8000;
-        else begin
-            scaled = num * 32768.0;
+// function logic signed [15:0] real_to_q1p15(input real num);
+//     real scaled;
+//     begin
+//         if (num >= 0.999969482421875)      // (32767 / 32768) is Q1.15 0.111111111111111
+//             real_to_q1p15 = 16'sh7FFF;
+//         else if (num <= -1.0)
+//             real_to_q1p15 = 16'sh8000;
+//         else begin
+//             scaled = num * 32768.0;
 
-            if (scaled >= 0) // positive
-                real_to_q1p15 = $rtoi(scaled + 0.5);
-            else // negative
-                real_to_q1p15 = $rtoi(scaled - 0.5);
-        end
-    end
-endfunction
+//             if (scaled >= 0) // positive
+//                 real_to_q1p15 = $rtoi(scaled + 0.5);
+//             else // negative
+//                 real_to_q1p15 = $rtoi(scaled - 0.5);
+//         end
+//     end
+// endfunction

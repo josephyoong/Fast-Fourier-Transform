@@ -1,0 +1,20 @@
+
+set_io o_led 41
+
+set_io o_hs 34
+set_io o_vs 31
+
+set_io o_r0 45
+set_io o_r1 43
+set_io o_r2 38
+set_io o_r3 36
+
+set_io o_g0 32
+set_io o_g1 28
+set_io o_g2 26
+set_io o_g3 23
+
+set_io o_b0 46
+set_io o_b1 44
+set_io o_b2 42
+set_io o_b3 37

@@ -31,28 +31,49 @@ module butterfly #(
     input i_rst,
     input i_en,
 
-    input signed [15:0] i_even [0:1], // {real, imag}
-    input signed [15:0] i_odd [0:1], // {real, imag}
-    input signed [15:0] i_twi [0:1], // {real, imag}
+    input signed [0:1] [15:0] i_i_even, // {real, imag}
+    input signed [0:1] [15:0] i_i_odd, // {real, imag}
+    input signed [0:1] [15:0] i_i_twi, // {real, imag}
 
-    output logic signed [15:0] o_top [0:1], // {real, imag}
-    output logic signed [15:0] o_btm [0:1] // {real, imag}
+    output logic signed [0:1] [15:0] o_o_top, // {real, imag}
+    output logic signed [0:1] [15:0] o_o_btm // {real, imag}
 );
 
-wire signed [15:0] twi_odd[0:1];
+// yosys packed
+logic signed [15:0] i_even [0:1];
+logic signed [15:0] i_odd [0:1];
+logic signed [15:0] i_twi [0:1];
+always_comb begin
+    for (int j=0; j<2; j++) begin
+        i_even[j] = i_i_even[j];
+        i_odd[j] = i_i_odd[j];
+        i_twi[j] = i_i_twi[j];
+    end
+end
+
+logic signed [15:0] o_top [0:1];
+logic signed [15:0] o_btm [0:1];
+assign o_o_top = {o_top[0], o_top[1]};
+assign o_o_btm = {o_btm[0], o_btm[1]};
+
+wire signed [15:0] twi_odd [0:1];
 logic signed [15:0] shift_even_re [0:2];
 logic signed [15:0] shift_even_im [0:2];
 
+wire signed [0:1] [15:0] twi_packed_net;
 // 1st, 2nd, 3rd clk edges
 // i_odd * i_twi
 complex_multiplier_16 #(.I(I), .F(F)) twiddler (
     .i_clk(i_clk),
     .i_rst(i_rst),
     .i_en(i_en),
-    .i_data1(i_odd),
-    .i_data2(i_twi),
-    .o_product(twi_odd)
+    .i_i_data1(i_i_odd),
+    .i_i_data2(i_i_twi),
+    .o_o_product(twi_packed_net)
 );
+
+assign twi_odd[0] = twi_packed_net[0];
+assign twi_odd[1] = twi_packed_net[1];
 
 always_ff @(posedge i_clk) begin
     if (i_rst) begin

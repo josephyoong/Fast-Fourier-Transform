@@ -24,16 +24,30 @@ module complex_multiplier_16 #(
     input i_rst,
     input i_en,
     // data inputs
-    input signed [15:0] i_data1[0:1],
-    input signed [15:0] i_data2[0:1],
+    input signed [0:1] [15:0] i_i_data1,
+    input signed [0:1] [15:0] i_i_data2,
     // data output
-    output logic signed [15:0] o_product[0:1]
+    output logic signed [0:1] [15:0] o_o_product
 );
 
-logic signed [31:0] prod1 = 0;
-logic signed [31:0] prod2 = 0;
-logic signed [31:0] prod3 = 0;
-logic signed [31:0] prod4 = 0;
+// yosys packed
+logic signed [15:0] i_data1 [0:1];
+logic signed [15:0] i_data2 [0:1];
+always_comb begin
+    for (int j=0; j<2; j++) begin
+        i_data1[j] = i_i_data1[j];
+        i_data2[j] = i_i_data2[j];
+    end
+end
+
+logic signed [15:0] o_product [0:1];
+assign o_o_product[0] = o_product[0];
+assign o_o_product[1] = o_product[1];
+
+logic signed [31:0] prod1;
+logic signed [31:0] prod2;
+logic signed [31:0] prod3;
+logic signed [31:0] prod4;
 
 logic signed [31:0] prod1_rnd = 0;
 logic signed [31:0] prod2_rnd = 0;
@@ -62,9 +76,9 @@ always_ff @(posedge i_clk) begin
     end
     else if (i_en) begin
         // 1st clk edge
-        prod1 <= i_data1[0] * i_data2[0]; // ac 
-        prod2 <= i_data1[0] * i_data2[1]; // ad
-        prod3 <= i_data1[1] * i_data2[0]; // bc
+        prod1 <= i_data1[0] * i_data2[0]; // ac     !!! TIMING ERROR
+        prod2 <= i_data1[0] * i_data2[1]; // ad     !!! MAKE IT USE DSP BLOCK
+        prod3 <= i_data1[1] * i_data2[0]; // bc     !!! INSTEAD OF LUTS
         prod4 <= i_data1[1] * i_data2[1]; // bd
 
         // 2nd clk edge - rounding

@@ -14,7 +14,7 @@ use two 256 x 16 EBR for 512 x 16 BRAM
 */
 
 module dp_bram_512x16 #(
-    parameter TEST = 0
+    parameter MEM_FILE = ""
 ) (
     input i_clk,
 
@@ -27,26 +27,36 @@ module dp_bram_512x16 #(
     output logic signed [15:0] o_rd_data
 );
 
-logic [15:0] r_mem [0:511];
+reg [15:0] r_mem [0:511];
+
+initial begin
+    if (MEM_FILE != "") begin
+        $readmemh(MEM_FILE, r_mem);
+    end
+    else begin
+        $readmemh("src/mem_zeroes.mem", r_mem);
+    end
+end
 
 // real angle;
 
-initial begin
-    if (TEST) begin
-        for (int i=0; i<512; i++) begin
-            // r_mem[i] = 16'b0010000000000000; // 0.5
+// initial begin
+//     if (TEST) begin
+//         // for (int i=0; i<512; i++) begin
+//         //     r_mem[i] = 16'b0010000000000000; // 0.25
 
-            real angle;
-            angle = 2.0 * 3.141592653589793 * 50 * i / 512.0;
-            r_mem[i] = $rtoi($cos(angle) * 8191);
-        end
-    end
-    else begin
-        for (int i=0; i<512; i++) begin
-            r_mem[i] = 16'd0;
-        end
-    end
-end
+//         //     // real angle;
+//         //     // angle = 2.0 * 3.141592653589793 * 50 * i / 512.0;
+//         //     // r_mem[i] = $rtoi($cos(angle) * 8191);
+//         // end
+//         $readmemh("ones.hex", r_mem);
+//     end
+//     else begin
+//         for (int i=0; i<512; i++) begin
+//             r_mem[i] = 16'd0;
+//         end
+//     end
+// end
 
 always_ff @(posedge i_clk) begin
     if (i_wr_en) begin
