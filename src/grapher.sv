@@ -197,7 +197,7 @@ always_comb begin
 
     sum_abs_rd_data = abs_rd_data[0] + abs_rd_data[1];
 
-    scaled_abs_rd_data = sum_abs_rd_data >> 8; // max 255
+    scaled_abs_rd_data = sum_abs_rd_data >> 6; // 8 for max 255???
 end
 
 // compare 
@@ -207,7 +207,7 @@ always_comb begin
 
         if ((r_y_pos_graph == 9'd255) ||
             (r_x_pos_graph == 9'd0) ||
-            (r_y_pos_graph == (GRAPH_HEIGHT - scaled_abs_rd_data))) begin
+            (r_y_pos_graph >= (GRAPH_HEIGHT - scaled_abs_rd_data))) begin
             // (r_y_pos_graph == (scaled_abs_rd_data))) begin
 
             draw = 1;

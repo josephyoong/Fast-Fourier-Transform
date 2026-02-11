@@ -63,7 +63,7 @@ assign write_mem2 = even_stage;
 assign even_segment = ~segment_count[0];
 
 wire even_segment2;
-assign even_segment2 = ~segment2_count[0];
+assign even_segment2 = (i_stage == 4'd9) ? 1'b1 : ~segment2_count[0];
 
 assign top_to_a = ~segment2_count[0];
 

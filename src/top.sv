@@ -68,13 +68,13 @@ wire clk_25MHz1538;
 wire pll_locked;
 SB_PLL40_CORE #(
     .FEEDBACK_PATH("SIMPLE"),
-    .DIVR(4'd12),        // divide by 13
-    .DIVF(7'd108),       // multiply by 109
-    .DIVQ(3'd3),        // divide by 2^3 = 8
+    .DIVR(4'd12),   // divide by 13
+    .DIVF(7'd108),  // multiply by 109
+    .DIVQ(3'd3),    // divide by 2^3 = 8
     .FILTER_RANGE(3'd1)
 ) pll (
-    .REFERENCECLK(clk_24MHz), // input 24 MHz
-    .PLLOUTCORE(clk_25MHz1538),     // output 25.1538 MHz
+    .REFERENCECLK(clk_24MHz),   // input 24 MHz
+    .PLLOUTCORE(clk_25MHz1538), // output 25.1538 MHz
     .LOCK(pll_locked),
     .RESETB(1'b1),
     .BYPASS(1'b0)
